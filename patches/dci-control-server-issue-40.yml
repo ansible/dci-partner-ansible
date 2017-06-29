@@ -1,0 +1,14 @@
+---
+# NOTE(spredzy): The Junit returned by ansible can not be parsed from the
+# DCI control server as it is returned. By applying thos two fixes number
+# can be nicely displayed. This will be removed once the fix addressed.
+# Link: https://github.com/redhat-cip/dci-control-server/issues/40
+
+- name: Removing first line of Junit file
+  shell: sed -i '1d' junit.xml
+
+- name: Since there is just one testsuite removing englobing testsuites
+  lineinfile:
+    path: 'junit.xml'
+    state: absent
+    regexp: '^.*testsuites.*'

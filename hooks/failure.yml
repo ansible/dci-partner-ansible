@@ -1,0 +1,13 @@
+---
+- name: Send failure notification via Slask
+  slack:
+    token: '{{ slack_token }}'
+    msg: '[{{ topic }}][{{ platform }}] Failed test <https://www.distributed-ci.io/#!/jobs/{{ job_id }}/results| distributed-ci.io link>'
+    channel: '#core_networking_tests'
+    parse: none
+    color: danger
+  delegate_to: localhost
+
+- name: A failure happened
+  fail:
+    msg: 'Something went wrong during the job. Please check the log'

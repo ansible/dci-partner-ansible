@@ -1,0 +1,23 @@
+---
+- name: Run the integration test suite
+  command: 'bash -x dci_run_{{ platform }}_integration_tests.sh'
+  environment:
+    JUNIT_OUTPUT_DIR: './junit'
+  ignore_errors: True
+
+- name: Find the result file
+  find:
+    paths: './junit'
+    recurse: yes
+  register: junit_file
+
+- name: Fetch Junit results
+  fetch:
+    src: '{{ junit_file.files[0]["path"] }}'
+    dest: "{{ lookup('env', 'PWD') }}/junit.xml"
+    flat: yes
+
+- name: Cleanup the directories
+  file:
+    path: junit
+    state: absent
