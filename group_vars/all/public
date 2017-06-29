@@ -1,0 +1,4 @@
+---
+base_location: /var/www/html
+platform: ovs
+topic: 'Ansible-2.4'

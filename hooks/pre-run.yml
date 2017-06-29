@@ -1,0 +1,4 @@
+---
+- name: echo pre-run
+  command: >
+    echo 'Nothing to do for the moment as we use a nodepool base node'

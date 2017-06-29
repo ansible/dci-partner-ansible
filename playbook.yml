@@ -1,0 +1,129 @@
+---
+# Initial Step:
+#
+# Schedule a new job giving a specific topic and specifying the remote CI.
+# The return of this action contains all the data associated with the job,
+# we hence register those data for later consumptions
+#
+- hosts: localhost
+  tasks:
+    - name: Schedule a new job
+      dci_job:
+        topic: '{{ topic }}'
+        remoteci: '{{ platform }}'
+      register: job_informations
+
+
+# New state
+#
+# User is free to do whaterver she needs before entering pre-run state.
+# Usually this is used to sync the components the job is relying on.
+#
+- name: Retrieve, install and configure the components
+  hosts: localhost
+  vars:
+    dci_status: 'new'
+    components: "{{ job_informations['components'] }}"
+  tasks:
+    - block:
+        - include: hooks/new.yml
+
+      rescue:
+        - include: hooks/teardown.yml
+        - include: hooks/failure.yml
+
+
+# Pre-run state
+#
+# User is free to do whaterver she needs before entering pre-run state.
+#
+- name: Spawn the testrunner VM that will be reaching the environment to tests
+  hosts: localhost
+  vars:
+    dci_status: 'pre-run'
+  tasks:
+    - block:
+        - include: hooks/pre-run.yml
+
+      rescue:
+        - include: hooks/teardown.yml
+        - include: hooks/failure.yml
+
+
+# Running state
+#
+# User is free to do whaterver she needs in the running state.
+#
+- name: Provision the environment to test with the correct version of Ansible
+  hosts: testrunner
+  vars:
+    dci_status: 'running'
+    agent_public_ip: '{{ hostvars.localhost.agent_public_ip }}'
+    ansible_snapshot_to_test: '{{ hostvars.localhost.ansible_snapshot_to_test }}'
+  tasks:
+    - block:
+        - include: hooks/running.yml
+
+      rescue:
+        - include: hooks/teardown.yml
+        - include: hooks/failure.yml
+
+
+# Post-run state
+#
+# User is free to do whaterver she needs before entering post-run state.
+# Usually this is used to run tests
+#
+- name: Run the integration tests and retrieve the junit results
+  hosts: testrunner
+  vars:
+    dci_status: 'post-run'
+    job_id: "{{ hostvars.localhost.job_informations['job_id'] }}"
+  tasks:
+    - block:
+        - include: hooks/post-run.yml
+
+      rescue:
+        - include: hooks/teardown.yml
+        - include: hooks/failure.yml
+
+
+- name: Upload the junit results
+  hosts: localhost
+  vars:
+    dci_status: 'post-run'
+    job_id: "{{ hostvars.localhost.job_informations['job_id'] }}"
+  tasks:
+    - block:
+        - include: patches/dci-control-server-issue-40.yml
+
+        - name: Upload the results
+          dci_file:
+            job_id: '{{ job_id }}'
+            path: 'junit.xml'
+            mime: 'application/junit'
+            name: 'run_{{ platform }}_integration_tests'
+
+        - name: Remove the junit file
+          file:
+            path: 'junit.xml'
+            state: absent
+
+      rescue:
+        - include: hooks/teardown.yml
+        - include: hooks/failure.yml
+
+
+# Success state
+# 
+# User is free to do whaterver she needs before entering pre-run state.
+# Usually this is used to teardown the plateform
+#
+- name: Celebrate the success
+  hosts: localhost
+  vars:
+    dci_status: 'success'
+  tasks:
+    - block:
+        - include: hooks/success.yml
+        - include: hooks/teardown.yml

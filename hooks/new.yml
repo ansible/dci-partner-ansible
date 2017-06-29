@@ -1,0 +1,78 @@
+---
+# TODO(spredzy): Replace this two task by
+# an include_role httpd
+- name: Ensure httpd is installed
+  package:
+    name: httpd
+
+- name: Ensure httpd is running
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+
+- name: Retrieve component
+  dci_component:
+    dest: '{{ lookup("env", "PWD") }}/{{ item["id"] }}.tar.gz'
+    id: '{{ item["id"] }}'
+  with_items: '{{ components }}'
+
+- name: Unarchive component
+  unarchive:
+    src: '{{ lookup("env", "PWD") }}/{{ item["id"] }}.tar.gz'
+    dest: '{{ lookup("env", "PWD") }}'
+    remote_src: True
+  with_items: '{{ components }}'
+
+- name: Identify resulting directory
+  find:
+    paths: '{{ lookup("env", "PWD") }}'
+    recurse: yes
+    file_type: directory
+    patterns: 'ansible-ansible-*'
+  register: ansible_folder
+
+- name: Get the commit
+  command: echo '{{ ansible_folder.files[0]["path"].split("/")[-1].split("-")[-1] }}'
+  register: commit
+
+- name: Ensure the repository directory exist
+  file:
+    path: '{{ base_location }}/{{ commit.stdout }}'
+    state: directory
+
+- name: Build the archive to share
+  command: python setup.py sdist --dist-dir '{{ base_location }}/{{ commit.stdout }}'
+  args:
+    chdir: '{{ ansible_folder.files[0]["path"] }}'
+
+- name: Clean workspace the tarball
+  file:
+    name: '{{ lookup("env", "PWD") }}/{{ item["id"] }}.tar.gz'
+    state: absent
+  with_items: '{{ components }}'
+
+- name: Clean workspace the untarred directory
+  file:
+    name: '{{ ansible_folder.files[0]["path"] }}'
+    state: absent
+
+- name: Determine name of the generated tarball
+  find:
+    paths: '{{ base_location }}/{{ commit.stdout }}'
+    recurse: yes
+  register: ansible_tarball
+
+
+# Setting facts to be reused on the testrunner node
+# Since the agent VM is in a cloud, we need to find out our public ip
+- name: Retrieve public IPv4 URL
+  uri:
+    url: https://api.ipify.org?format=json
+    return_content: yes
+  register: myipv4
+
+- name: Set various facts
+  set_fact:
+    agent_public_ip: '{{ myipv4.json.ip }}'
+    ansible_snapshot_to_test: '{{ commit.stdout}}/{{ ansible_tarball.files[0]["path"].split("/")[-1] }}'
