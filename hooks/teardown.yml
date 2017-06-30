@@ -1,3 +1,12 @@
 ---
-- name: echo teardown
-  command: echo 'teardown'
+- name: Delete the nodepool node for the specified platform
+  shell: nodepool delete $(nodepool list | grep '.*{{ platform }}.*\sready\s.*\sunlocked\s.*' | awk '{ print $2 }')
+  delegate_to: testrunner
+
+- name: Wait for the new node to be ready and unlocked
+  shell: nodepool list | grep '.*{{ platform }}.*\sready\s.*\sunlocked\s.*'
+  register: nodepool_list
+  until: nodepool_list.rc == 0
+  retries: 72
+  delay: 5
+  delegate_to: testrunner
