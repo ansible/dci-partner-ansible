@@ -26,6 +26,9 @@
     components: "{{ job_informations['components'] }}"
   tasks:
     - block:
+        # We ensure the platform against which we will run our test
+        # is always clean
+        - include: hooks/teardown.yml
         - include: hooks/new.yml
 
       rescue:
