@@ -45,4 +45,4 @@
 - name: Explicitly fails if the test suite has a failure
   fail:
     msg: 'The integration test suite exited with failures. Please check the log'
-  when: integration_tests_suite != 0
+  when: integration_tests_suite.rc != 0
