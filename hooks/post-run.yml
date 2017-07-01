@@ -6,6 +6,7 @@
   environment:
     JUNIT_OUTPUT_DIR: './junit'
   ignore_errors: True
+  register: integration_tests_suite
 
 - name: Find the result file
   find:
@@ -40,3 +41,8 @@
     path: 'junit.xml'
     state: absent
   delegate_to: localhost
+
+- name: Explicitly fails if the test suite has a failure
+  fail:
+    msg: 'The integration test suite exited with failures. Please check the log'
+  when: integration_tests_suite != 0
