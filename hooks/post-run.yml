@@ -1,13 +1,15 @@
 ---
 - name: Run the integration test suite
-  command: 'bash -x dci_run_{{ platform }}_integration_tests.sh'
+  shell: 'source ansible/hacking/env-setup && ansible-playbook -i inventory run_{{ platform }}_integration_tests.yaml'
+  args:
+    chdir: './ansible-testrunner'
   environment:
     JUNIT_OUTPUT_DIR: './junit'
   ignore_errors: True
 
 - name: Find the result file
   find:
-    paths: './junit'
+    paths: './ansible-testrunner/junit'
     recurse: yes
   register: junit_file
 
@@ -19,5 +21,22 @@
 
 - name: Cleanup the directories
   file:
-    path: junit
+    path: './ansible-testrunner/junit'
     state: absent
+
+- include: patches/dci-control-server-issue-40.yml
+  delegate_to: localhost
+
+- name: Upload the results
+  dci_file:
+    job_id: '{{ job_id }}'
+    path: 'junit.xml'
+    mime: 'application/junit'
+    name: 'run_{{ platform }}_integration_tests'
+  delegate_to: localhost
+
+- name: Remove the junit file
+  file:
+    path: 'junit.xml'
+    state: absent
+  delegate_to: localhost
