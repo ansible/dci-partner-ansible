@@ -38,7 +38,7 @@
         state: absent
       with_items: '{{ components }}'
 
-  when: not component_already_installed.stat.isdir
+  when: component_already_installed.stat.isdir is undefined or not component_already_installed.stat.isdir
 
 # Setting facts to be reused on the testrunner node
 # Since the agent VM is in a cloud, we need to find out our public ip
@@ -51,4 +51,4 @@
 - name: Set various facts
   set_fact:
     agent_public_ip: '{{ myipv4.json.ip }}'
-    ansible_snapshot_to_test: '{{ commit.stdout}}/ansible'
+    ansible_commit: '{{ commit.stdout}}'

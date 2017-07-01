@@ -62,7 +62,7 @@
   vars:
     dci_status: 'running'
     agent_public_ip: '{{ hostvars.localhost.agent_public_ip }}'
-    ansible_snapshot_to_test: '{{ hostvars.localhost.ansible_snapshot_to_test }}'
+    ansible_commit: '{{ hostvars.localhost.ansible_commit }}'
   tasks:
     - block:
         - include: hooks/running.yml

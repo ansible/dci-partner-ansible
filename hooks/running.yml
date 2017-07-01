@@ -6,5 +6,6 @@
 
 - name: Clone the ansible version to test
   git:
-    repo: 'centos@{{ agent_public_ip}}:{{ base_location}}/{{ ansible_snapshot_to_test }}'
+    repo: 'centos@{{ agent_public_ip}}:{{ base_location}}/{{ ansible_commit }}/ansible'
     dest: ./ansible-testrunner/ansible
+    version: '{{ ansible_commit }}'
