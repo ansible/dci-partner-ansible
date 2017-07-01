@@ -1,10 +1,10 @@
 ---
-- name: Installing Ansible from Agent component
-  # NOTE(spredzy): While we are using Ricky's server we shouldn't
-  # install anything. This playbook just verifies the workflow from
-  # end-to-end. We need to create a new nodepool node where we can
-  # actually pip install the ansible provided by DCI
-  #pip:
-  #  name: http://{{ agent_public_ip }}/{{ ansible_snapshot_to_test }}
-  #  state: forceinstall
-  command: echo 'Running'
+- name: Removing previous version of ansible
+  file:
+    path: ./ansible-testrunner/ansible
+    state: absent
+
+- name: Clone the ansible version to test
+  git:
+    repo: 'centos@{{ agent_public_ip}}:{{ base_location}}/{{ ansible_snapshot_to_test }}'
+    dest: ./ansible-testrunner/ansible
