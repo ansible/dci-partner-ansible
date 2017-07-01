@@ -91,32 +91,6 @@
         - include: hooks/failure.yml
 
 
-- name: Upload the junit results
-  hosts: localhost
-  vars:
-    dci_status: 'post-run'
-    job_id: "{{ hostvars.localhost.job_informations['job_id'] }}"
-  tasks:
-    - block:
-        - include: patches/dci-control-server-issue-40.yml
-
-        - name: Upload the results
-          dci_file:
-            job_id: '{{ job_id }}'
-            path: 'junit.xml'
-            mime: 'application/junit'
-            name: 'run_{{ platform }}_integration_tests'
-
-        - name: Remove the junit file
-          file:
-            path: 'junit.xml'
-            state: absent
-
-      rescue:
-        - include: hooks/teardown.yml
-        - include: hooks/failure.yml
-
-
 # Success state
 # 
 # User is free to do whaterver she needs before entering pre-run state.
