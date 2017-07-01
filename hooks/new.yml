@@ -1,68 +1,44 @@
 ---
-# TODO(spredzy): Replace this two task by
-# an include_role httpd
-- name: Ensure httpd is installed
-  package:
-    name: httpd
-
-- name: Ensure httpd is running
-  service:
-    name: httpd
-    state: started
-    enabled: yes
-
-- name: Retrieve component
-  dci_component:
-    dest: '{{ lookup("env", "PWD") }}/{{ item["id"] }}.tar.gz'
-    id: '{{ item["id"] }}'
-  with_items: '{{ components }}'
-
-- name: Unarchive component
-  unarchive:
-    src: '{{ lookup("env", "PWD") }}/{{ item["id"] }}.tar.gz'
-    dest: '{{ lookup("env", "PWD") }}'
-    remote_src: True
-  with_items: '{{ components }}'
-
-- name: Identify resulting directory
-  find:
-    paths: '{{ lookup("env", "PWD") }}'
-    recurse: yes
-    file_type: directory
-    patterns: 'ansible-ansible-*'
-  register: ansible_folder
-
-- name: Get the commit
-  command: echo '{{ ansible_folder.files[0]["path"].split("/")[-1].split("-")[-1] }}'
+- name: Retrieve the SHA1 commit from the component meta data
+  command: echo '{{ components[0]["name"].split(" ")[-1] }}'
   register: commit
 
-- name: Ensure the repository directory exist
-  file:
-    path: '{{ base_location }}/{{ commit.stdout }}'
-    state: directory
+- name: Check if the component has already been installed
+  stat:
+    path: '{{ base_location }}/{{ commit.stdout }}/ansible'
+  register: component_already_installed
 
-- name: Build the archive to share
-  command: python setup.py sdist --dist-dir '{{ base_location }}/{{ commit.stdout }}'
-  args:
-    chdir: '{{ ansible_folder.files[0]["path"] }}'
+# The component is retrieved only if it hasn't been retrieved
+# already. This avoid useless cycles of downloads.
+- block:
+    - name: Retrieve component
+      dci_component:
+        dest: '{{ lookup("env", "PWD") }}/{{ item["id"] }}.tar.gz'
+        id: '{{ item["id"] }}'
+      with_items: '{{ components }}'
 
-- name: Clean workspace the tarball
-  file:
-    name: '{{ lookup("env", "PWD") }}/{{ item["id"] }}.tar.gz'
-    state: absent
-  with_items: '{{ components }}'
+    - name: Ensure the repository directory exist
+      file:
+        path: '{{ base_location }}/{{ commit.stdout }}'
+        state: directory
+        owner: centos
+        group: centos
+        recurse: yes
 
-- name: Clean workspace the untarred directory
-  file:
-    name: '{{ ansible_folder.files[0]["path"] }}'
-    state: absent
+    - name: Unarchive component
+      unarchive:
+        src: '{{ lookup("env", "PWD") }}/{{ item["id"] }}.tar.gz'
+        dest: '{{ base_location }}/{{ commit.stdout }}'
+        remote_src: True
+      with_items: '{{ components }}'
 
-- name: Determine name of the generated tarball
-  find:
-    paths: '{{ base_location }}/{{ commit.stdout }}'
-    recurse: yes
-  register: ansible_tarball
+    - name: Clean workspace the tarball
+      file:
+        name: '{{ lookup("env", "PWD") }}/{{ item["id"] }}.tar.gz'
+        state: absent
+      with_items: '{{ components }}'
 
+  when: not component_already_installed.stat.isdir
 
 # Setting facts to be reused on the testrunner node
 # Since the agent VM is in a cloud, we need to find out our public ip
@@ -75,4 +51,4 @@
 - name: Set various facts
   set_fact:
     agent_public_ip: '{{ myipv4.json.ip }}'
-    ansible_snapshot_to_test: '{{ commit.stdout}}/{{ ansible_tarball.files[0]["path"].split("/")[-1] }}'
+    ansible_snapshot_to_test: '{{ commit.stdout}}/ansible'
