@@ -2,7 +2,7 @@
 - name: Send failure notification via Slask
   slack:
     token: '{{ slack_token }}'
-    msg: '[{{ topic }}][{{ platform }}] Failed test <https://www.distributed-ci.io/#!/jobs/{{ job_id }}/results| distributed-ci.io link>'
+    msg: '<https://www.distributed-ci.io/#!/jobs/{{ job_id }}/results| [{{ topic }}][{{ platform }}] Failed test > @here'
     channel: '#core_networking_tests'
     parse: none
     color: danger
