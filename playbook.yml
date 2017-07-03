@@ -5,6 +5,9 @@
 # The return of this action contains all the data associated with the job,
 # we hence register those data for later consumptions
 #
+# Retrieves all of the information about a specific topic from the control
+# server.
+
 - hosts: localhost
   tasks:
     - name: Schedule a new job
@@ -17,11 +20,16 @@
 # New state
 #
 # User is free to do whaterver she needs before entering pre-run state.
-# Usually this is used to sync the components the job is relying on.
 #
+# The test state on the control server is updated by setting the dci_status
+# variable
+#
+
 - name: Retrieve, install and configure the components
   hosts: localhost
   vars:
+    # The status is updated on the control server by setting the dci_status
+    # variable
     dci_status: 'new'
     components: "{{ job_informations['components'] }}"
   tasks:
@@ -29,10 +37,17 @@
         # We ensure the platform against which we will run our test
         # is always clean
         - include: hooks/teardown.yml
+        # This checks to see if the code for the most recent snapshot of the
+        # topic has already been pulled. If it hasn't, it pulls the code
+        # and saves it onto the agent somewhere.
         - include: hooks/new.yml
 
       rescue:
+        # Should any of these steps fail, teardown the test environment and
+        # report failure.
         - include: hooks/teardown.yml
+        # Our failue script is configured to post a notification to one of our
+        # slack channels
         - include: hooks/failure.yml
 
 
@@ -46,8 +61,11 @@
     dci_status: 'pre-run'
   tasks:
     - block:
+        # This is where you would provision a new VM for running tests on.
+        # We are using Node Pool which automatically rebuilds a new VM after the
+        # old is deleted, so in our case the new VM is actually provisioned in
+        # the teardown step, and our pre-run.yml doesn't actually do anything.
         - include: hooks/pre-run.yml
-
       rescue:
         - include: hooks/teardown.yml
         - include: hooks/failure.yml
@@ -65,6 +83,8 @@
     ansible_commit: '{{ hostvars.localhost.ansible_commit }}'
   tasks:
     - block:
+        # Ensures that any previous versions of ansible are removed and copies
+        # the new version from hooks/new.yml over to the nodepool server.
         - include: hooks/running.yml
 
       rescue:
@@ -84,6 +104,10 @@
     job_id: "{{ hostvars.localhost.job_informations['job_id'] }}"
   tasks:
     - block:
+        # This is where the actual integration tests are run. We set up the
+        # ansible environment by running source ansible/hacking/env-setup. Then
+        # the tests are run by running the playbook for testing the device.
+        # Junit results are collected and uploaded to the control server.
         - include: hooks/post-run.yml
 
       rescue:
@@ -92,8 +116,8 @@
 
 
 # Success state
-# 
-# User is free to do whaterver she needs before entering pre-run state.
+#
+# User is free to do whaterver she needs before entering success state.
 # Usually this is used to teardown the plateform
 #
 - name: Celebrate the success
