@@ -46,6 +46,8 @@
         # Should any of these steps fail, teardown the test environment and
         # report failure.
         - include: hooks/teardown.yml
+        # Our failue script is configured to post a notification to one of our
+        # slack channels
         - include: hooks/failure.yml
 
 
@@ -115,7 +117,7 @@
 
 # Success state
 #
-# User is free to do whaterver she needs before entering pre-run state.
+# User is free to do whaterver she needs before entering success state.
 # Usually this is used to teardown the plateform
 #
 - name: Celebrate the success
