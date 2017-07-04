@@ -1,3 +1,9 @@
 ---
-- name: echo success
-  command: echo 'success'
+- name: Send success notification via Slask
+  slack:
+    token: '{{ slack_token }}'
+    msg: 'Successful run <https://www.distributed-ci.io/#!/jobs/{{ job_id }}/results| [{{ topic }}][{{ platform }}] Successful run>'
+    channel: '#core_networking_tests'
+    parse: none
+    color: good
+  delegate_to: localhost

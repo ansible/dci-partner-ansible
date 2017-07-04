@@ -124,6 +124,7 @@
   hosts: localhost
   vars:
     dci_status: 'success'
+    job_id: "{{ hostvars.localhost.job_informations['job_id'] }}"
   tasks:
     - block:
         - include: hooks/success.yml
