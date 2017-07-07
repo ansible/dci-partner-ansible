@@ -85,6 +85,9 @@
     - block:
         # Ensures that any previous versions of ansible are removed and copies
         # the new version from hooks/new.yml over to the nodepool server.
+        # This is where the actual integration tests are run. We set up the
+        # ansible environment by running source ansible/hacking/env-setup. Then
+        # the tests are run by running the playbook for testing the device.
         - include: hooks/running.yml
 
       rescue:
@@ -98,15 +101,13 @@
 # Usually this is used to run tests
 #
 - name: Run the integration tests and retrieve the junit results
-  hosts: testrunner
+  hosts: localhost
   vars:
     dci_status: 'post-run'
     job_id: "{{ hostvars.localhost.job_informations['job_id'] }}"
+    integration_tests_suite: '{{ hostvars.testrunner.integration_tests_suite }}'
   tasks:
     - block:
-        # This is where the actual integration tests are run. We set up the
-        # ansible environment by running source ansible/hacking/env-setup. Then
-        # the tests are run by running the playbook for testing the device.
         # Junit results are collected and uploaded to the control server.
         - include: hooks/post-run.yml
 
