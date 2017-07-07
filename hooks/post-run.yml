@@ -1,32 +1,25 @@
 ---
-- name: Run the integration test suite
-  shell: 'source ansible/hacking/env-setup && ansible-playbook -i inventory run_{{ platform }}_integration_tests.yaml'
-  args:
-    chdir: './ansible-testrunner'
-  environment:
-    JUNIT_OUTPUT_DIR: './junit'
-  ignore_errors: True
-  register: integration_tests_suite
-
 - name: Find the result file
   find:
     paths: './ansible-testrunner/junit'
     recurse: yes
   register: junit_file
+  delegate_to: testrunner
 
 - name: Fetch Junit results
   fetch:
     src: '{{ junit_file.files[0]["path"] }}'
     dest: "{{ lookup('env', 'PWD') }}/junit.xml"
     flat: yes
+  delegate_to: testrunner
 
 - name: Cleanup the directories
   file:
     path: './ansible-testrunner/junit'
     state: absent
+  delegate_to: testrunner
 
 - include: patches/dci-control-server-issue-40.yml
-  delegate_to: localhost
 
 - name: Upload the results
   dci_file:
@@ -34,13 +27,11 @@
     path: 'junit.xml'
     mime: 'application/junit'
     name: 'run_{{ platform }}_integration_tests'
-  delegate_to: localhost
 
 - name: Remove the junit file
   file:
     path: 'junit.xml'
     state: absent
-  delegate_to: localhost
 
 - name: Explicitly fails if the test suite has a failure
   fail:

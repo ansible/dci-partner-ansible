@@ -9,3 +9,12 @@
     repo: 'centos@{{ agent_public_ip}}:{{ base_location}}/{{ ansible_commit }}/ansible'
     dest: ./ansible-testrunner/ansible
     version: '{{ ansible_commit }}'
+
+- name: Run the integration test suite
+  shell: 'source ansible/hacking/env-setup && ansible-playbook -i inventory run_{{ platform }}_integration_tests.yaml'
+  args:
+    chdir: './ansible-testrunner'
+  environment:
+    JUNIT_OUTPUT_DIR: './junit'
+  ignore_errors: True
+  register: integration_tests_suite
