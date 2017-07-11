@@ -19,8 +19,6 @@
     state: absent
   delegate_to: testrunner
 
-- include: patches/dci-control-server-issue-40.yml
-
 - name: Upload the results
   dci_file:
     job_id: '{{ job_id }}'
