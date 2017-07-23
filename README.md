@@ -43,4 +43,6 @@ One can try any matrices one wants:
 
 ## Questions ?
 
+Freenode: `#ansible-network`
+
 Distributed-CI Team:  <distributed-ci@redhat.com>
