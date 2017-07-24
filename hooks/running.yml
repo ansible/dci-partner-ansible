@@ -11,10 +11,8 @@
     version: '{{ ansible_commit }}'
 
 - name: Run the integration test suite
-  shell: 'source ansible/hacking/env-setup && ansible-playbook -i inventory run_{{ platform }}_integration_tests.yaml'
+  shell: 'ansible/test/runner/ansible-test network-integration --continue-on-error --inventory /var/lib/nodepool/ansible-testrunner/inventory {{ platform }}_.* -v'
   args:
     chdir: './ansible-testrunner'
-  environment:
-    JUNIT_OUTPUT_DIR: './junit'
   ignore_errors: True
   register: integration_tests_suite
