@@ -1,4 +1,18 @@
 ---
-- name: echo pre-run
-  command: >
-    echo 'Nothing to do for the moment as we use a nodepool base node'
+# Only delete unit results related to this platforms, It's possible we could be running two platforms against this version of Ansible.
+
+- name: Find old JUnit results for this platform
+  find:
+    paths: './ansible-testrunner/ansible/test/results/junit/'
+    patterns: '{{ platform }}_*.xml'
+    recurse: yes
+  register: junit_files
+  delegate_to: testrunner
+
+- name: Delete old JUnit results for this platform
+  file:
+    path: '{{ item.path }}'
+    state: absent
+  with_items: '{{ junit_files.files }}'
+  delegate_to: testrunner
+

@@ -1,35 +1,44 @@
 ---
-- name: Find the result file
+- name: Find the JUnit result files
   find:
-    paths: './ansible-testrunner/junit'
+    paths: './ansible-testrunner/ansible/test/results/junit/'
+    # Incase there are multiple platforms being tested, only copy the one we are interestd in
+    patterns: '{{ platform }}_*.xml'
     recurse: yes
-  register: junit_file
+  register: junit_files
   delegate_to: testrunner
 
-- name: Fetch Junit results
-  fetch:
-    src: '{{ junit_file.files[0]["path"] }}'
-    dest: "{{ lookup('env', 'PWD') }}/junit.xml"
-    flat: yes
-  delegate_to: testrunner
-
-- name: Cleanup the directories
+- name: Create temp directory
   file:
-    path: './ansible-testrunner/junit'
-    state: absent
+    path: "{{ lookup('env', 'PWD') }}/junit-{{ job_id }}"
+    state: directory
+
+- name: Fetch JUnit results
+  fetch:
+    src: '{{ item.path }}'
+    dest: "{{ lookup('env', 'PWD') }}/junit-{{ job_id }}"
+    flat: yes
+    validate_checksum: no
+  with_items: '{{ junit_files.files }}'
   delegate_to: testrunner
 
-- name: Upload the results
+- name: Combine JUnit results into single file
+  shell: "xunitmerge {{ lookup('env', 'PWD') }}/junit-{{ job_id }}/*.xml {{ lookup('env', 'PWD') }}/junit-{{ job_id }}.xml"
+
+- name: Upload the results to DCI
   dci_file:
     job_id: '{{ job_id }}'
-    path: 'junit.xml'
+    path: "{{ lookup('env', 'PWD') }}/junit-{{ job_id }}.xml"
     mime: 'application/junit'
     name: 'run_{{ platform }}_integration_tests'
 
-- name: Remove the junit file
+- name: Delete JUnit files
   file:
-    path: 'junit.xml'
+    path: "{{ item }}"
     state: absent
+  with_items:
+    - "{{ lookup('env', 'PWD') }}/junit-{{ job_id }}.xml"
+    - "{{ lookup('env', 'PWD') }}/junit-{{ job_id }}"
 
 - name: Explicitly fails if the test suite has a failure
   fail:
