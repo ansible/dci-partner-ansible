@@ -31,13 +31,13 @@ Then simply run the command `ansible-playbook -i hosts playbook.yml`.
 
 The playbook can be driven through variables. The two most important one being `platform` and `topic`
 
-  * `platform`: The platform to run integration test for (ovs, vyos, cisco, ...). Default to ovs.
-  * `topic`: The topic to run the integration test against (Ansible-2.3, Ansible-2.4, ...). Default to Ansible-2.4.
+  * `platform`: The platform to run integration test for (openvswitch, vyos, cisco, ...).
+  * `topic`: The topic to run the integration test against (Ansible-2.3, Ansible-2.4, ...).
 
 One can try any matrices one wants:
 
-  * `ansible-playbook -i hosts playbook.yml -e platform='ovs' -e topic='Ansible-2.3'`
-  * `ansible-playbook -i hosts playbook.yml -e platform='ovs' -e topic='Ansible-2.4'`
+  * `ansible-playbook -i hosts playbook.yml -e platform='openvswitch' -e topic='Ansible-2.3'`
+  * `ansible-playbook -i hosts playbook.yml -e platform='openvswitch' -e topic='Ansible-2.4'`
   * `ansible-playbook -i hosts playbook.yml -e platform='vyos' -e topic='Ansible-2.3'`
   * `ansible-playbook -i hosts playbook.yml -e platform='vyos' -e topic='Ansible-2.4'`
 
