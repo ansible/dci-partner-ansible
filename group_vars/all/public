@@ -1,4 +1,4 @@
 ---
 base_location: /srv/dci/ansible/
-platform: ovs
+platform: openvswitch
 topic: 'Ansible-2.4'
