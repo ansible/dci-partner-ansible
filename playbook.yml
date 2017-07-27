@@ -20,6 +20,13 @@
       set_fact:
         job_id: '{{ job_informations["job_id"] }}'
 
+# Ensure the job_id variable is available to all hosts
+- hosts: all !localhost
+  tasks:
+    - name: Set  global variables
+      set_fact:
+        job_id: "{{ hostvars['localhost']['job_id'] }}"
+
 
 # New state
 #

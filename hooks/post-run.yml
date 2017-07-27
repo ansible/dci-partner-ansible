@@ -1,44 +1,47 @@
 ---
-- name: Find the JUnit result files
+- name: Find the result file
   find:
-    paths: './ansible-testrunner/ansible/test/results/junit/'
-    # Incase there are multiple platforms being tested, only copy the one we are interestd in
-    patterns: '{{ platform }}_*.xml'
+    paths: './ansible-testrunner/{{ job_id }}/ansible/test/results/junit/'
     recurse: yes
   register: junit_files
   delegate_to: testrunner
 
 - name: Create temp directory
   file:
-    path: "{{ lookup('env', 'PWD') }}/junit-{{ job_id }}"
+    path: "{{ lookup('env', 'PWD') }}/{{ job_id }}/junit-fragments/"
     state: directory
 
 - name: Fetch JUnit results
   fetch:
     src: '{{ item.path }}'
-    dest: "{{ lookup('env', 'PWD') }}/junit-{{ job_id }}"
+    dest: "{{ lookup('env', 'PWD') }}/{{ job_id }}/junit-fragments/"
     flat: yes
     validate_checksum: no
   with_items: '{{ junit_files.files }}'
   delegate_to: testrunner
 
-- name: Combine JUnit results into single file
-  shell: "xunitmerge {{ lookup('env', 'PWD') }}/junit-{{ job_id }}/*.xml {{ lookup('env', 'PWD') }}/junit-{{ job_id }}.xml"
+# pip install xunitmerge
 
-- name: Upload the results to DCI
+- name: Combine JUnit results into single file
+  shell: "xunitmerge {{ lookup('env', 'PWD') }}/{{ job_id }}/junit-fragments/*.xml {{ lookup('env', 'PWD') }}/{{ job_id }}/junit.xml"
+
+- name: Upload the results
   dci_file:
     job_id: '{{ job_id }}'
-    path: "{{ lookup('env', 'PWD') }}/junit-{{ job_id }}.xml"
+    path: "{{ lookup('env', 'PWD') }}/{{ job_id }}/junit.xml"
     mime: 'application/junit'
     name: 'run_{{ platform }}_integration_tests'
 
-- name: Delete JUnit files
+- name: Cleanup checkout on remote
   file:
-    path: "{{ item }}"
+    path: "{{ lookup('env', 'PWD') }}/{{ job_id }}"
     state: absent
-  with_items:
-    - "{{ lookup('env', 'PWD') }}/junit-{{ job_id }}.xml"
-    - "{{ lookup('env', 'PWD') }}/junit-{{ job_id }}"
+
+- name: Cleanup temp JUnit files on testrunner
+  file:
+    path: "./ansible-testrunner/{{ job_id }}"
+    state: absent
+  delegate_to: testrunner
 
 - name: Explicitly fails if the test suite has a failure
   fail:

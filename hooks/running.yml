@@ -1,17 +1,17 @@
 ---
-- name: Removing previous version of ansible
+- name: Create working directory based on job_id
   file:
-    path: ./ansible-testrunner/ansible
-    state: absent
+    path: "./ansible-testrunner/{{ job_id }}"
+    state: directory
 
 - name: Clone the ansible version to test
   git:
     repo: 'centos@{{ agent_public_ip}}:{{ base_location}}/{{ ansible_commit }}/ansible'
-    dest: ./ansible-testrunner/ansible
+    dest: "./ansible-testrunner/{{ job_id }}/ansible"
     version: '{{ ansible_commit }}'
 
 - name: Run the integration test suite
-  shell: 'ansible/test/runner/ansible-test network-integration --continue-on-error --inventory /var/lib/nodepool/ansible-testrunner/inventory {{ platform }}_.* -v'
+  shell: '{{ job_id }}/ansible/test/runner/ansible-test network-integration --continue-on-error --inventory /var/lib/nodepool/ansible-testrunner/inventory {{ platform }}_.* -v'
   args:
     chdir: './ansible-testrunner'
   ignore_errors: True
