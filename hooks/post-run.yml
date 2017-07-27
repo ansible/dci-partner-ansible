@@ -32,17 +32,6 @@
     mime: 'application/junit'
     name: 'run_{{ platform }}_integration_tests'
 
-- name: Cleanup checkout on remote
-  file:
-    path: "{{ lookup('env', 'PWD') }}/{{ job_id }}"
-    state: absent
-
-- name: Cleanup temp JUnit files on testrunner
-  file:
-    path: "./ansible-testrunner/{{ job_id }}"
-    state: absent
-  delegate_to: testrunner
-
 - name: Explicitly fails if the test suite has a failure
   fail:
     msg: 'The integration test suite exited with failures. Please check the log'
