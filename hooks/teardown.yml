@@ -1,4 +1,16 @@
 ---
+
+- name: Cleanup checkout on remote
+  file:
+    path: "{{ lookup('env', 'PWD') }}/{{ job_id }}"
+    state: absent
+
+- name: Cleanup temp JUnit files on testrunner
+  file:
+    path: "./ansible-testrunner/{{ job_id }}"
+    state: absent
+  delegate_to: testrunner
+
 - name: Delete the nodepool node for the specified platform
   shell: nodepool delete $(nodepool list | grep '.*{{ platform }}.*\sready\s.*\sunlocked\s.*' | awk '{ print $2 }')
   delegate_to: testrunner
