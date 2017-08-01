@@ -15,7 +15,7 @@ The integration playbook for Distributed CI (DCI) and Ansible networking plugins
 
 See [technical overview](https://github.com/ansible/dci-partner-ansible/blob/master/overview.md) for more information.
 
-## Questions ?
+## Questions?
 
 Freenode: `#ansible-network`
 
