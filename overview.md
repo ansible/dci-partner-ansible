@@ -20,7 +20,7 @@ The control server is in charge of taking snapshots of the Ansible Git repo a nu
 
 ## Provisioning the Agent
 
-The current version of the DCI agent requires an RPM based operating system (CentOS, RHEL). We have an Ansible Role to install [ansible-dci-roles](https://github.com/newswangerd/ansible-dci-roles) to facilitate the setup of the DCI agent. This role installs dci-ansible and configures it to connect to the central distributed-ci.io server. We will provide you with the URL for our control server as well as an API key and user which need to be added to in defaults/main.yaml before the playbook is run.
+The current version of the DCI agent requires an RPM based operating system (CentOS, RHEL). We have an Ansible Role to install [ansible-dci-setup](https://github.com/ansible/dci-partner-ansible/tree/master/dci-agent-setup/) to facilitate the setup of the DCI agent. This role installs dci-ansible and configures it to connect to the central distributed-ci.io server. We will provide you with the URL for our control server as well as an API key and user which need to be added to in defaults/main.yaml before the playbook is run.
 
 ### Cron Scripts
 
@@ -119,7 +119,7 @@ The following is the list of steps to be completed:
 Partner to create a CentOS 7 or RHEL7 node within their lab environment.
 
 * Firewall to allow outgoing access to `distributed-ci.io`, incoming access is not required
-* Install [dci-agent role ](https://github.com/newswangerd/ansible-dci-roles) which will enable EPEL
+* Install [dci-agent-setup role ](https://github.com/ansible/dci-partner-ansible/tree/master/dci-agent-setup/) which will enable EPEL
 * Install and adapt (dci-partner-ansible)[https://github.com/ansible/dci-partner-ansible] to the partner's needs
 * Schedule the jobs to run periodically from the dciagent node
 
