@@ -1,0 +1,43 @@
+- name: Ensure that they system is running Red Hat
+  assert:
+    that:
+      - ansible_os_family == "RedHat"
+      - ansible_distribution_major_version == "7"
+
+- name: Ensure required variables are defined
+  fail: msg="{{ item }} value missing and is required"
+  when: "{{ item }} is not defined"
+  with_items:
+    - dci_user
+    - dci_control_url
+    - dci_api_key
+
+- name: install EPEL
+  yum:
+    name: epel-release
+    state: present
+
+- name: install dci-agent
+  yum:
+    name: https://packages.distributed-ci.io/dci-release.el7.noarch.rpm
+    state: present
+
+- name: install dci-ansible
+  yum:
+    name: dci-ansible
+    state: present
+
+- name: temp fix for bug with requests requirment
+  lineinfile:
+    path: /usr/lib/python2.7/site-packages/dciclient-0.3.3-py2.7.egg-info/requires.txt
+    regexp: '^requests'
+    line: 'requests'
+
+- name: set up connection information
+  template:
+    src: templates/env.sh
+    dest: /etc/profile.d/dci_credentials.sh
+    owner: root
+    group: root
+    mode: 744
+  no_log: true
