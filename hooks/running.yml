@@ -11,7 +11,7 @@
     version: '{{ ansible_commit }}'
 
 - name: Run the integration test suite
-  shell: '{{ job_id }}/ansible/test/runner/ansible-test network-integration --continue-on-error --inventory /var/lib/nodepool/ansible-testrunner/inventory {{ platform }}_.* -v'
+  shell: '{{ job_id }}/ansible/test/runner/ansible-test network-integration --continue-on-error --diff --inventory /var/lib/nodepool/ansible-testrunner/inventory {{ platform }}_.* -v'
   args:
     chdir: './ansible-testrunner'
   ignore_errors: True
