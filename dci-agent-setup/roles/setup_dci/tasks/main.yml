@@ -39,5 +39,5 @@
     dest: /etc/profile.d/dci_credentials.sh
     owner: root
     group: root
-    mode: 744
+    mode: 0744
   no_log: true
