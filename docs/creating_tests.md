@@ -13,5 +13,3 @@ This playbook is intended to be run using the dci callback plugin which should a
 
 - *job_informations*: this must be set to the returned value from the `dci_job` module. It contains the information required to post the results back to the DCI server.
 - *dci_status*: must be set at the beginning of each play in the playbook. This tells the server which step the testing is currently on.
-
-# [WIP] Information about running tests with ansible-test

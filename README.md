@@ -14,7 +14,7 @@ The integration playbook for Distributed CI (DCI) and Ansible networking plugins
 # Details
 
 See
-- [Technical Overview](/docs/overview.md) for more information.
+- [Technical Overview](/docs/overview.md) for a high level overview of DCI.
 - [Agent Setup](/docs/agent_setup.md) for a guide on setting up the DCI agent
 - [Creating Tests](/docs/creating_tests.md) for a guide on creating and running DCI tests
 
