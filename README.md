@@ -13,12 +13,13 @@ The integration playbook for Distributed CI (DCI) and Ansible networking plugins
 
 # Details
 
-See [technical overview](https://github.com/ansible/dci-partner-ansible/blob/master/overview.md) for more information.
+See
+- [Technical Overview](/docs/overview.md) for more information.
+- [Agent Setup](/docs/agent_setup.md) for a guide on setting up the DCI agent
+- [Creating Tests](/docs/creating_tests.md) for a guide on creating and running DCI tests
 
 ## Questions?
 
 Freenode: `#ansible-network`
 
 Distributed-CI Team:  <distributed-ci@redhat.com>
-
-

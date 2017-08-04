@@ -27,6 +27,19 @@
     name: dci-ansible
     state: present
 
+- name: install pip
+  yum:
+    name: python-pip
+    state: present
+
+- name: install a couple of neccesary python packages
+  pip:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - junit_xml   # allows usage of the junit callback plugin
+    - xunitmerge  # allows user to merge junit into one file
+
 - name: temp fix for bug with requests requirment
   lineinfile:
     path: /usr/lib/python2.7/site-packages/dciclient-0.3.3-py2.7.egg-info/requires.txt
