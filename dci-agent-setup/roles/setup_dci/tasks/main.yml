@@ -54,3 +54,8 @@
     group: root
     mode: 0744
   no_log: true
+
+- name: configure Ansible to use the DCI callback plugins and modules
+  template:
+    src: templates/ansible.cfg
+    dest: /etc/ansible/ansible.cfg
