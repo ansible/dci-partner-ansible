@@ -42,7 +42,9 @@ To get an idea of how this all fits together, take a look at our current test se
 
    `ansible-playbook -i hosts playbook.yml -e platform='vyos' -e topic='Ansible-2.4`
 
-Our setup currently uses two hosts setup uses two hosts: *dciagent* and *nodepool* (shown below). When `playbook.yml` is run the following happens:
+Our setup currently uses two hosts setup uses two hosts: *dciagent* and *nodepool* (shown below).
+
+When `playbook.yml` is run the following happens:
 
 1. (from dciagent) Schedule a new job, get all the attached information (such as components, tests) to this specific job
 2. (from nodepool) Ensure the node in charge of running the integration tests is deleted and re-up and running before continuing

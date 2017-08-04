@@ -1,15 +1,15 @@
 # Agent Setup
 
-Installing the DCI agent is relatively straightforward. We have a role which should do the trick in [dci-agent-setup](/dci-agent-setup).
+We have an Ansible role to install the DCI Agent here: [dci-agent-setup](/dci-agent-setup).
 
-At the moment the [DCI agent](https://github.com/redhat-cip/python-dciclient) is only officially supported on a CentOS or RHEL server, which we provide packages for. An Ansible role to install the DCI agent on Ubuntu is currently in development.
+At the moment the [DCI agent](https://github.com/redhat-cip/python-dciclient) is only officially supported on a CentOS 7 or RHEL 7 server, which we provide packages for. An Ansible role to install the DCI agent on Ubuntu is currently in development.
 
 ## dci-agent-setup Role
-Before running the role to install the DCI agent, you need to set the following variables:
+Before running the role to install the DCI agent, you need to set the following variables, which can be specified as host variables, using the `-e dci_user...` flag or using the `set_fact` module.
 
-- dci_user: username for the dci server
-- dci_control_url: DCI server (defaults to: https://api.distributed-ci.io)
-- dci_api_key: password for the DCI user
+- `dci_user`: username for the dci server
+- `dci_control_url`: DCI server (defaults to: https://api.distributed-ci.io)
+- `dci_api_key`: password for the DCI user
 
 We recommend storing these as a separate file and encrypting them with Ansible Vault.
 
