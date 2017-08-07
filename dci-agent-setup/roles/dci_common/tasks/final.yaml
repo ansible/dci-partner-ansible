@@ -1,0 +1,5 @@
+---
+- name: setup correct ansible.cfg
+  template:
+    src: ansible.cfg
+    dest: /etc/ansible/ansible.cfg

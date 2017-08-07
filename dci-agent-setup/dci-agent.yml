@@ -1,3 +1,3 @@
-- hosts: dci-hosts
+- hosts: dci-agent
   roles:
-    - setup_dci
+    - centos_setup_dci
