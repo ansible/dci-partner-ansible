@@ -45,9 +45,6 @@
     components: "{{ job_informations['components'] }}"
   tasks:
     - block:
-        # We ensure the platform against which we will run our test
-        # is always clean
-        - include: hooks/teardown.yml
         # This checks to see if the code for the most recent snapshot of the
         # topic has already been pulled. If it hasn't, it pulls the code
         # and saves it onto the agent somewhere.
