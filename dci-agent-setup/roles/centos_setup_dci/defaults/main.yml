@@ -1,0 +1,3 @@
+dci_user: your_username
+dci_control_url: https://api.distributed-ci.io
+dci_api_key: your_password

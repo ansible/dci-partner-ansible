@@ -2,7 +2,7 @@
 
 ## Overview
 
-Distributed Continuous Integration (*DCI*) testing is a system for vendors who maintain Ansible Network modules to host test equipment (switches, routers, etc.) for their modules in their own testing environments while providing an API and web interface for sharing the results of those tests with the Ansible maintainers. Network partners already have the necessary expertise and hardware/firmware matrix in house to be able to ensure compatibility with Ansible.This allows network vendors to ensure that their modules are correctly tested by giving them the ability to contribute comprehensive integration testing and test results.
+Distributed Continuous Integration (*DCI*) testing is a system for vendors who maintain Ansible Network modules to host test equipment (switches, routers, etc.) for their modules in their own testing environments while providing an API and web interface for sharing the results of those tests with the Ansible maintainers. Network partners already have the necessary expertise and hardware/firmware matrix in house to be able to ensure compatibility with Ansible. This allows network vendors to ensure that their modules are correctly tested by giving them the ability to contribute comprehensive integration testing and test results.
 
 ## Architecture
 
@@ -20,14 +20,14 @@ The control server is in charge of taking snapshots of the Ansible Git repo a nu
 
 ## Provisioning the Agent
 
-The current version of the DCI agent requires an RPM based operating system (CentOS, RHEL). We have an Ansible Role to install [ansible-dci-setup](https://github.com/ansible/dci-partner-ansible/tree/master/dci-agent-setup/) to facilitate the setup of the DCI agent. This role installs dci-ansible and configures it to connect to the central distributed-ci.io server. We will provide you with the URL for our control server as well as an API key and user which need to be added to in defaults/main.yaml before the playbook is run.
+The current version of the DCI agent requires an RPM based operating system (CentOS, RHEL). We have an Ansible Role ([ansible-dci-setup](/dci-agent-setup)) to facilitate the setup of the DCI agent. This role installs dci-ansible and configures it to connect to the central distributed-ci.io server. We will provide you with the URL for our control server as well as an API key and user which need to be added to in defaults/main.yaml before the playbook is run. More information on setting up the agent can be found [here](/docs/agent_setup.md).
 
 ### Cron Scripts
 
     # Update cache of Ansible source code
     30 22 * * * DCI_CS_URL='https://api.distributed-ci.io' DCI_LOGIN='admin' DCI_PASSWORD='REDACTED' bash -c "cd ~/dci-feeders && ansible-playbook playbook.yml"
     30 10 * * * DCI_CS_URL='https://api.distributed-ci.io' DCI_LOGIN='admin' DCI_PASSWORD='REDACTED' bash -c "cd ~/dci-feeders && ansible-playbook playbook.yml"
-    
+
     # Run Tests
     00 18 * * * DCI_CS_URL='https://api.distributed-ci.io' DCI_CLIENT_ID='REDACTED' DCI_API_SECRET='REDACTED' bash -c "cd ~/dci-partner-ansible && ansible-playbook -i hosts playbook.yml -e platform='vyos' -e topic='Ansible-2.4'"
     15 18 * * * DCI_CS_URL='https://api.distributed-ci.io' DCI_CLIENT_ID='REDACTED' DCI_API_SECRET='REDACTED' bash -c "cd ~/dci-partner-ansible && ansible-playbook -i hosts playbook.yml -e platform='vyos' -e topic='Ansible-2.3'"
@@ -38,19 +38,11 @@ The current version of the DCI agent requires an RPM based operating system (Cen
 
 DCI test playbooks contain several steps which correspond to various testing states. Broadly speaking, a DCI test playbook needs to register a new job with the control server, and then keep the control server up to date on the various steps of the testing process. Each step of the testing process is defined as a different play and keeps the DCI control server up to date on which step is being run by defining the dci_status variable.
 
-Tests can be run manually by doing:
+To get an idea of how this all fits together, take a look at our current test setup here: [playbook.yaml](/playbook.yaml). This example playbook is what we are currently using to test the modules that are supported by the Ansible team. These tests can be run using the following command:
 
-   ansible-playbook -i hosts playbook.yml -e platform='vyos' -e topic='Ansible-2.4
+   `ansible-playbook -i hosts playbook.yml -e platform='vyos' -e topic='Ansible-2.4`
 
-## Provisioning test machines
-
-### OpenStack
-
-Source Repo: [dci-partner-ansible](https://github.com/ansible/dci-partner-ansible).
-
-This setup uses two hosts: *dciagent* and *nodepool* (shown below).
-
-FIXME add image
+Our setup currently uses two hosts setup uses two hosts: *dciagent* and *nodepool* (shown below).
 
 When `playbook.yml` is run the following happens:
 
@@ -61,6 +53,10 @@ When `playbook.yml` is run the following happens:
 5. (from nodepool) Setup Ansible by running  `source hacking/env-setup`. Run the integrations tests by executing a playbook against the matching nodepool spawned node and generated JUnit result.
 6. (from dciagent) Retrieve the Junit result and upload it back to the DCI Control Server
 7. (from nodepool) Ensure the node in which the test was run is destroyed
+
+![agent workflow diagram](/docs/assets/agent-workflow.png)
+
+More generalized information about setting up DCI tests [can be found here](/docs/creating_tests.md)
 
 ## Other provisioning systems
 
@@ -122,5 +118,3 @@ Partner to create a CentOS 7 or RHEL7 node within their lab environment.
 * Install [dci-agent-setup role ](https://github.com/ansible/dci-partner-ansible/tree/master/dci-agent-setup/) which will enable EPEL
 * Install and adapt (dci-partner-ansible)[https://github.com/ansible/dci-partner-ansible] to the partner's needs
 * Schedule the jobs to run periodically from the dciagent node
-
-
