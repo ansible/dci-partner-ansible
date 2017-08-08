@@ -1,0 +1,65 @@
+---
+- name: Ensure required variables are defined
+  fail: msg="{{ item }} value missing and is required"
+  when: "{{ item }} is not defined"
+  with_items:
+    - dci_user
+    - dci_control_url
+    - dci_api_key
+
+- name: Ensure that the role is being used on a supported OS
+  assert:
+    that: (ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7') or
+          (ansible_distribution == 'Ubuntu')
+
+# I think RHEL has different steps for installing EPEL
+- name: install EPEL
+  yum:
+    name: epel-release
+    state: present
+  when: ansible_distribution == "CentOS"
+
+- name: install pip
+  package:
+    name: python-pip
+    state: present
+
+- name: install a couple of neccesary python packages
+  pip:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - junit_xml   # allows usage of the junit callback plugin
+    - xunitmerge  # allows user to merge junit into one file
+
+- name: set up connection information
+  template:
+    src: env.sh
+    dest: /etc/profile.d/dci_credentials.sh
+    owner: root
+    group: root
+    mode: 0744
+  no_log: true
+
+- name: red hat
+  block:
+  - debug: msg="Running tasks for Red Hat systems"
+
+  - name: include tasks for red hat systems
+    include: redhat.yaml
+
+  when: (ansible_os_family == 'RedHat')
+
+- name: ubuntu
+  block:
+  - debug: msg="Running tasks for Ubuntu"
+
+  - name: include tasks for Ubuntu
+    include: ubuntu.yaml
+
+  when: (ansible_distribution == 'Ubuntu')
+
+- name: setup correct ansible.cfg
+  template:
+    src: ansible.cfg
+    dest: /etc/ansible/ansible.cfg

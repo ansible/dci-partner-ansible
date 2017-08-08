@@ -1,15 +1,4 @@
 ---
-- name: include common tasks
-  include_role:
-    name: dci_common
-    tasks_from: top
-
-- name: Ensure that they system is running Red Hat
-  assert:
-    that:
-      - ansible_os_family == "RedHat"
-      - ansible_distribution_major_version == "7"
-
 - name: install dci-agent
   yum:
     name: https://packages.distributed-ci.io/dci-release.el7.noarch.rpm
@@ -25,8 +14,3 @@
     path: /usr/lib/python2.7/site-packages/dciclient-0.3.3-py2.7.egg-info/requires.txt
     regexp: '^requests'
     line: 'requests'
-
-- name: include common tasks
-  include_role:
-    name: dci_common
-    tasks_from: final
