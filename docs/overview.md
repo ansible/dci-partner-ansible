@@ -20,7 +20,7 @@ The control server is in charge of taking snapshots of the Ansible Git repo a nu
 
 ## Provisioning the Agent
 
-The current version of the DCI agent requires an RPM based operating system (CentOS, RHEL). We have an Ansible Role ([ansible-dci-setup](/dci-agent-setup)) to facilitate the setup of the DCI agent. This role installs dci-ansible and configures it to connect to the central distributed-ci.io server. We will provide you with the URL for our control server as well as an API key and user which need to be added to in defaults/main.yaml before the playbook is run. More information on setting up the agent can be found [here](/docs/agent_setup.md).
+We have an Ansible Role ([ansible-dci-setup](/dci-agent-setup)) to facilitate the setup of the DCI agent. This role installs dci-ansible and configures it to connect to the central distributed-ci.io server. We will provide you with the URL for our control server as well the an API keys and their corresponding RemoteCIs which need to be added to in `defaults/main.yaml` before the playbook is run. More information on setting up the agent can be found [here](/docs/agent_setup.md).
 
 ### Cron Scripts
 
