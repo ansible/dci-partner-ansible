@@ -3,9 +3,8 @@
   fail: msg="{{ item }} value missing and is required"
   when: "{{ item }} is not defined"
   with_items:
-    - dci_user
-    - dci_control_url
-    - dci_api_key
+    - dci_group_name
+    - remotcis
 
 - name: Ensure that the role is being used on a supported OS
   assert:
@@ -32,13 +31,27 @@
     - junit_xml   # allows usage of the junit callback plugin
     - xunitmerge  # allows user to merge junit into one file
 
+- name: create group for DCI files
+  group:
+    name: "{{ dci_group_name }}"
+    state: present
+
+- name: create directory for storing api keys
+  file:
+    path: /etc/dci
+    state: directory
+    mode: 0770
+    owner: root
+    group: "{{ dci_group_name }}"
+
 - name: set up connection information
   template:
     src: env.sh
-    dest: /etc/profile.d/dci_credentials.sh
+    dest: /etc/dci/{{ item.name }}.sh
     owner: root
-    group: root
-    mode: 0744
+    group: "{{ dci_group_name }}"
+    mode: 0770
+  with_items: "{{remotcis}}"
   no_log: true
 
 - name: red hat

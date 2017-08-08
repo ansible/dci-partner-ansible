@@ -9,9 +9,11 @@ DCI tests do the following:
 
 If you haven't done so already, open up [our example playbook](/playbook.yml) to view the needed steps. This playbook constitutes a series of plays which represent different steps the test's life cycle: _new_, _pre-run_, _running_, _post-run_, and _success_.
 
-This playbook is intended to be run using the dci callback plugin which should already be configured in `/etc/ansible/ansible.cg`. This plugin requires that a couple of variables are set in the playbook in order to function correctly.
+This playbook is intended to be run using the dci callback plugin which should already be configured in `/etc/ansible/ansible.cg`. This plugin requires that a couple of variables are set in the playbook in order to function correctly. These are:
 
 - *job_informations*: this must be set to the returned value from the `dci_job` module. It contains the information required to post the results back to the DCI server.
 - *dci_status*: must be set at the beginning of each play in the playbook. This tells the server which step the testing is currently on.
+
+During playbook execution, the dci callback plugin uses these two variables to send information back to the DCI control server about the current test status.
 
 # [WIP] Information about running tests with ansible-test

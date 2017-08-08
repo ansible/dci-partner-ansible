@@ -1,3 +1,14 @@
-dci_user: user
-dci_control_url: https://api.distributed-ci.io
-dci_api_key: password
+# DCI Credentials will be accessible to users in this group.
+dci_group_name: dci
+
+# Credentials for RemoteCIs are specified here. Each platform being tested
+# gets it's own RemoteCI.
+
+# remotcis:
+#   - name: platform1
+#     remoteci_id: YOUR_REMOTE_CI_ID_HERE
+#     dci_control_url: https://api.distributed-ci.io
+#     remoteci_api_key: YOUR_REMOTE_CI_API_KEY_HERE
+#
+#   - name: platform2
+#     ...
