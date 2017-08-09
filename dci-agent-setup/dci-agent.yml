@@ -7,4 +7,4 @@
 
 - hosts: dci-agent
   roles:
-    - setup_dci_agent
+    - dci-agent

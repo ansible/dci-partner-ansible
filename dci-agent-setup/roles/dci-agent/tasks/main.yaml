@@ -4,7 +4,7 @@
   when: "{{ item }} is not defined"
   with_items:
     - dci_group_name
-    - remotcis
+    - remotecis
 
 - name: Ensure that the role is being used on a supported OS
   assert:
@@ -51,26 +51,13 @@
     owner: root
     group: "{{ dci_group_name }}"
     mode: 0770
-  with_items: "{{remotcis}}"
+  with_items: "{{remotecis}}"
   no_log: true
 
-- name: red hat
+- name: include OS specific tasks
   block:
-  - debug: msg="Running tasks for Red Hat systems"
-
-  - name: include tasks for red hat systems
-    include: redhat.yaml
-
-  when: (ansible_os_family == 'RedHat')
-
-- name: ubuntu
-  block:
-  - debug: msg="Running tasks for Ubuntu"
-
-  - name: include tasks for Ubuntu
-    include: ubuntu.yaml
-
-  when: (ansible_distribution == 'Ubuntu')
+  - debug: msg="Running tasks for {{ ansible_os_family }} systems"
+  - include: "{{ ansible_os_family }}.yaml"
 
 - name: setup correct ansible.cfg
   template:

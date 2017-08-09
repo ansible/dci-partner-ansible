@@ -34,9 +34,3 @@
     - callback
     - modules
     - module_utils
-
-- name: source dci_credentials from non login prompts such as su
-  lineinfile:
-    path: /etc/bash.bashrc
-    line: source /etc/profile.d/dci_credentials.sh
-    state: present
