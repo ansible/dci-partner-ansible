@@ -4,7 +4,7 @@ dci_group_name: dci
 # Credentials for RemoteCIs are specified here. Each platform being tested
 # gets it's own RemoteCI.
 
-# remotcis:
+# remotecis:
 #   - name: platform1
 #     remoteci_id: YOUR_REMOTE_CI_ID_HERE
 #     dci_control_url: https://api.distributed-ci.io
