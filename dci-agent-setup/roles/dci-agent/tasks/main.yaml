@@ -11,12 +11,10 @@
     that: (ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7') or
           (ansible_distribution == 'Ubuntu')
 
-# I think RHEL has different steps for installing EPEL
 - name: install EPEL
-  yum:
-    name: epel-release
-    state: present
-  when: ansible_distribution == "CentOS"
+  include_role:
+    name: geerlingguy.repo-epel
+  when: ansible_os_family == "RedHat"
 
 - name: install pip
   package:
