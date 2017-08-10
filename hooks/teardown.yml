@@ -12,7 +12,7 @@
   delegate_to: testrunner
 
 - name: Delete the nodepool node for the specified platform
-  shell: nodepool list | tail -n +4 | head -n -1 | awk -F '|' '{if ($5 ~ /^ {{ platform }}/ && $12 == " ready " && $14 == " unlocked ") print $2}' | xargs -t -n1 -r nodepool delete
+  shell: nodepool list | tail -n +4 | head -n -1 | awk -F '|' '{if ($5 ~ /^ {{ platform }}/ && $12 ~ /^ ready/ && $14 ~ /^ unlocked/) print $2}' | xargs -t -n1 -r nodepool delete
   delegate_to: testrunner
 
 - name: Wait for the new node to be ready and unlocked
