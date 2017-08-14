@@ -1,6 +1,6 @@
 ---
 - name: Ensure required variables are defined
-  fail: msg="{{ item }} value missing and is required"
+  fail: msg="{{ item }} value missing and is required. See docs/agent_setup.md for details"
   when: "{{ item }} is not defined"
   with_items:
     - dci_group_name
