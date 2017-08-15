@@ -3,7 +3,7 @@
     repo:  ppa:ansible/ansible
     state: present
 
-- name: install neccesary packages
+- name: install neccessary packages
   apt:
     name: "{{ item }}"
     state: present
@@ -21,16 +21,24 @@
 - name: download ansible-dci from github
   git:
     repo: https://github.com/redhat-cip/dci-ansible.git
-    dest: /tmp/git_files/
+    dest: /tmp/redhat-cip/
 
 - name: create directories
   file:
     path: /usr/share/dci/
     state: directory
+    mode: 0775
+    owner: root
+    group: "{{ dci_group_name }}"
 
 - name: install ansible-dci modules/plugins
-  shell: "cp -r /tmp/git_files/{{ item }} /usr/share/dci/{{ item }}"
+  shell: "cp -r /tmp/redhat-cip/{{ item }} /usr/share/dci/{{ item }}"
   with_items:
     - callback
     - modules
     - module_utils
+
+- name: remove temporary files
+  file:
+    path: /tmp/redhat-cip/
+    state: absent

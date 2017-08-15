@@ -1,6 +1,7 @@
 ---
 - name: Ensure required variables are defined
-  fail: msg="{{ item }} value missing and is required. See docs/agent_setup.md for details"
+  fail:
+    msg: "{{ item }} value missing and is required. See docs/agent_setup.md for details"
   when: "{{ item }} is not defined"
   with_items:
     - dci_group_name
@@ -21,7 +22,7 @@
     name: python-pip
     state: present
 
-- name: install a couple of neccesary python packages
+- name: Install dependencies
   pip:
     name: "{{ item }}"
     state: present
