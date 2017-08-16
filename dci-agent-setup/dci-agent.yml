@@ -1,3 +1,10 @@
-- hosts: dci-hosts
+- hosts: all
+  gather_facts: False
+
+  tasks:
+  - name: install python on ubuntu if it is missing
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+- hosts: dci-agent
   roles:
-    - setup_dci
+    - dci-agent
