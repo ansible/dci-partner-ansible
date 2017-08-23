@@ -1,8 +1,16 @@
 ---
+- name: Retrieve the job results
+  dci_job:
+    id: '{{ job_id }}'
+    embed:
+      - results
+  register: job_results
+  delegate_to: localhost
+
 - name: Send success notification via Slask
   slack:
     token: '{{ slack_token }}'
-    msg: 'Successful run <https://www.distributed-ci.io/#!/jobs/{{ job_id }}/results| [{{ topic }}][{{ platform }}] Successful run>'
+    msg: 'Successful run <https://www.distributed-ci.io/#!/jobs/{{ job_id }}/results| [{{ topic }}][{{ platform }}] Successful run> Total: {{ job_results.job.results[0].total }} - Success {{ job_results.job.results[0].success }} - Skip {{ job_results.job.results[0].skips }} - Error {{ job_results.job.results[0].errors }} - Failure {{ job_results.job.results[0].failures }}'
     channel: '#core_networking_tests'
     parse: none
     color: good
