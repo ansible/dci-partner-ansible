@@ -13,7 +13,6 @@
     - name: Schedule a new job
       dci_job:
         topic: '{{ topic }}'
-        remoteci: '{{ platform }}'
       register: job_informations
 
     - name: Set  global variables
