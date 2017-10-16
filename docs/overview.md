@@ -12,7 +12,7 @@ DCI has two main components:
 
 2. **DCI agent** which sits behind the vendor's firewall and runs the integration tests.
 
-The control server is in charge of taking snapshots of the Ansible Git repo a number of times a day via the *feeder* process. It is configured to post these snapshots to *topics* which represent different releases (currently devel, and 2.3). The control server is managed by Ansible, and aside from getting access to the API, vendors do no not need to worry too much about this component.
+The control server is in charge of taking snapshots of the Ansible Git repo a number of times a day via the *feeder* process. It is configured to post these snapshots to *topics* which represent different releases (currently devel, and 2.3). The control server is managed by Ansible, and aside from getting access to the API, vendors do not need to worry too much about this component.
 
 "The DCI agent is in charge of invoking integration tests. Since integration tests are just playbooks they can be run from the DCI agent periodically via cron jobs, manually or however the vendor sees fit. When this happens, the agent reaches out to the control server, authenticates, and pulls the latest snapshot for whichever topic (version) is being tested. The agent then uses Ansible playbooks to provision the correct test environment, runs the configured tests and then pushes the test results back to the control server. Once results are ready contributors from Ansible and the vendor can log in to the control server and see what happened.
 
@@ -42,7 +42,7 @@ To get an idea of how this all fits together, take a look at our current test se
 
    `ansible-playbook -i hosts playbook.yml -e platform='vyos' -e topic='Ansible-2.4`
 
-Our setup currently uses two hosts setup uses two hosts: *dciagent* and *nodepool* (shown below).
+Our setup currently uses two hosts: *dciagent* and *nodepool* (shown below).
 
 When `playbook.yml` is run the following happens:
 
@@ -60,7 +60,7 @@ More generalized information about setting up DCI tests [can be found here](/doc
 
 ## Other provisioning systems
 
-We encourage you to set up your tests using based on the existing code in [/hooks](https://github.com/ansible/dci-partner-ansible/tree/master/hooks) with what is needed for your environment.
+We encourage you to set up your tests using playbooks based on the existing code in [/hooks](https://github.com/ansible/dci-partner-ansible/tree/master/hooks), changed to comply with what is needed for your environment.
 
 # DCI Terminology
 
@@ -80,7 +80,7 @@ We encourage you to set up your tests using based on the existing code in [/hook
 
 **Remote CI:** This item represents your lab. It is an item that will hold the label that will be attached to job runs. Users of a team are associated with the Remote CIs they are allowed to interact with. Special Tests can be attached to specific Remote CIs. Remote CIs are owned by a "team", so the same name can be reused, e.g. Remote CI `net` can exist under "Ansible" and "cisco-nxos".
 
-**Test:** Set of tests that will be run on the deployed platform. Tests can be specified at different level. The Topic level, the Team level, the Remote CI level.
+**Test:** Set of tests that will be run on the deployed platform. Tests can be specified at different levels. The Topic level, the Team level, the Remote CI level.
 
 **Job:** A run of a topic against a specific component.
 
@@ -190,5 +190,5 @@ Partner to create a CentOS 7 or RHEL7 node within their lab environment. Other O
 
 * Firewall to allow outgoing access to `distributed-ci.io`, incoming access is not required
 * Install [dci-agent-setup role ](https://github.com/ansible/dci-partner-ansible/tree/master/dci-agent-setup/) which will enable EPEL
-* Install and adapt (dci-partner-ansible)[https://github.com/ansible/dci-partner-ansible] to the partner's needs
+* Install and adapt [dci-partner-ansible](https://github.com/ansible/dci-partner-ansible) to the partner's needs
 * Schedule the jobs to run periodically from the dciagent node
