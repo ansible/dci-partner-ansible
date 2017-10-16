@@ -130,7 +130,7 @@ The following is the list of steps to be completed:
     * Email
     * Password: Enter a temporary password
     * Team: Select their Partner Team
-    * Role: Product Owner
+    * Role: Admin
 
 
 * Email Partner Team Admin (Red Hat)
@@ -143,7 +143,7 @@ Subject: Distributed CI (DCI) account details for $team
 Hi,
 We've just created an account for you on https://www.distributed-ci.io
 
-The account has "Product Owner" privileges, meaning you can create standard "user" accounts for the other members of your team.
+The account has "Admin" privileges, meaning you can create standard "user" accounts for the other members of your team.
 
 Please see LINK TO THIS PAGE for details.
 
@@ -159,7 +159,7 @@ Please update your password by visiting https://www.distributed-ci.io/#!/passwor
 
 ```
 
-* Create Users for Team (Partner Product Owner)
+* Create Users for Team (Partner Admin)
 
   * [DCI Users](https://www.distributed-ci.io/#!/admin/users)
   * Create new user
@@ -171,7 +171,7 @@ Please update your password by visiting https://www.distributed-ci.io/#!/passwor
     * Team: Select their Partner Team
     * Role: User
 
-* Create Remote CI for each product (Partner Product Owner)
+* Create Remote CI for each product (Partner Admin)
 
   * [DCI Remote CI](https://www.distributed-ci.io/#!/admin/remotecis)
   * Create new Remove CI
