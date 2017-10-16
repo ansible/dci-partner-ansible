@@ -64,11 +64,21 @@ We encourage you to set up your tests using based on the existing code in [/hook
 
 # DCI Terminology
 
-**User:** A User. Two possible roles, a team admin, with administrator privileges and a regular user.
+**User:** A User, in exactly one team. In one of the following roles:
 
-**Team:** Users are part of a team. Distributed-CI is a multi-tenant platform, where each team is isolated. As of now, users can only be part of a single team.
+  * **User:** Basic privilege account.
 
-**Remote CI:** This item represents your lab. It is an item that will hold the label that will be attached to job runs. Users of a team are associated with the Remote CIs they are allowed to interact with. Special Tests can be attached to specific Remote CIs
+  * **Admin:** Has the ability to create users within their team.
+
+  * **Product Owner:** Has the ability to create teams. User must be in the `Product Team`.
+
+
+**Product Team:** The "top-level" team, in this case Ansible.
+
+**Partner Team:** Network Partner team. For companies that have multiple products in and development teams we split this into groups, such as "company-product", e.g. `cisco-ios`, `cisco-nxos`. Otherwise a single team is used, such as `Juniper`.
+
+
+**Remote CI:** This item represents your lab. It is an item that will hold the label that will be attached to job runs. Users of a team are associated with the Remote CIs they are allowed to interact with. Special Tests can be attached to specific Remote CIs. Remote CIs are owned by a "team", so the same name can be reused, e.g. Remote CI `net` can exist under "Ansible" and "cisco-nxos".
 
 **Test:** Set of tests that will be run on the deployed platform. Tests can be specified at different level. The Topic level, the Team level, the Remote CI level.
 
@@ -105,14 +115,78 @@ The following is the list of steps to be completed:
 
 **www.distributed-ci.io**
 
-* Create the team in www.distributed-ci.io
-* Create the accounts for the member of the team that will use www.distributed-ci.io
-* Create the necessary RemoteCIs (one per lab)
-* Give the team members the necessary permissions
+* Create new Partner Team (Red Hat)
+
+  * [DCI Teams](https://www.distributed-ci.io/#!/admin/teams)
+  * If Ansible modules exist for multiple platforms for this company, then we create one team per product, using the Ansible platform prefix, see existing teams for examples.
+
+* Create Admin user for Partner Team (Red Hat)
+
+  * [DCI Users](https://www.distributed-ci.io/#!/admin/users)
+  * Create new user
+
+    * Login: GitHub name
+    * Full Name
+    * Email
+    * Password: Enter a temporary password
+    * Team: Select their Partner Team
+    * Role: Product Owner
+
+
+* Email Partner Team Admin (Red Hat)
+
+Send an email to the new Partner Team Admin with the following
+
+Subject: Distributed CI (DCI) account details for $team
+
+```
+Hi,
+We've just created an account for you on https://www.distributed-ci.io
+
+The account has "Product Owner" privileges, meaning you can create standard "user" accounts for the other members of your team.
+
+Please see LINK TO THIS PAGE for details.
+
+Any issues reply to this email, or feel free to use the `#ansible-network` channel on Freenode.
+
+Username: FIXME
+
+Tempoarary Password: FIXME
+
+Please update your password by visiting https://www.distributed-ci.io/#!/password before proceding further.
+
+
+
+```
+
+* Create Users for Team (Partner Product Owner)
+
+  * [DCI Users](https://www.distributed-ci.io/#!/admin/users)
+  * Create new user
+
+    * Login: GitHub name
+    * Full Name
+    * Email
+    * Password: Enter a temporary password
+    * Team: Select their Partner Team
+    * Role: User
+
+* Create Remote CI for each product (Partner Product Owner)
+
+  * [DCI Remote CI](https://www.distributed-ci.io/#!/admin/remotecis)
+  * Create new Remove CI
+
+    * Name: Generally the Ansible module prefix. As the Remote CI exists within the "Team", names do not need to be globally unique.
+
+    * Team: Select your Team
+    * Allow upgrade: Keep default (unchecked)
+    * Click "Create"
+  * Make a note of the details from the `dcirc.sh` file, you will need these when setting up the `dci-agent`
+
 
 **dci-agent**
 
-Partner to create a CentOS 7 or RHEL7 node within their lab environment.
+Partner to create a CentOS 7 or RHEL7 node within their lab environment. Other Operating systems are not supported.
 
 * Firewall to allow outgoing access to `distributed-ci.io`, incoming access is not required
 * Install [dci-agent-setup role ](https://github.com/ansible/dci-partner-ansible/tree/master/dci-agent-setup/) which will enable EPEL
