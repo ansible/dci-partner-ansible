@@ -20,7 +20,9 @@ remotecis:
     remoteci_api_key: REMOTE_CI_API_KEY_2
 ```
 
-The credentials for your *Remote CI* can be found at [DCI Remote CI](https://www.distributed-ci.io/admin/remotecis)
+The credentials for your *Remote CI* can be found at [DCI Remote CI](https://www.distributed-ci.io/admin/remotecis) and downloading the configuration file.
+
+
 Each entry in this list will be saved as a shell script in `/etc/dci` which can be activated using `source /etc/platform1.sh` in order to set up the environment variables required to connect to the DCI control server. The scripts in this directory will be readable by any operating system use that belongs to the group specified in `dci_group_name` variable. Running DCI tests requires that the DCI_CS_URL, DCI_CLIENT_ID and DCI_API_SECRET environment variables be set, which are all set by these scripts.
 
 We recommend encrypting [dci-agent/defaults/main.yaml](/dci-agent-setup/roles/dci-agent/defaults/main.yaml) using Ansible Vault to protect DCI credentials.
