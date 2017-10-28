@@ -37,4 +37,4 @@ Running the `dci-agent` role on your server will perform the following actions:
 - Store credentials for the RemoteCIs in `/etc/dci`
 - Configures Ansible to use the DCI plugins and modules
 
-After the role finishes, log in to the server and try the following command: `source /etc/platform1.sh && dcictl topic-list`. If your credentials are set up correctly this should return a list of Ansible versions which you can test against.
+After the role finishes, log in to the server and try the following command: `source /etc/dci/platform1.sh && dcictl topic-list`. If your credentials are set up correctly this should return a list of Ansible versions which you can test against.
