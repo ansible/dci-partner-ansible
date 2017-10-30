@@ -122,7 +122,7 @@ The following is the list of steps to be completed:
 * Give Parner Team access to Topics (Red Hat)
 
   * [DCI Topics](https://www.distributed-ci.io/topics)
-  * For each of the topics, edit and 
+  * For each of the appropriate topics, edit and add the new team to the "Topic's teams" list
 
 
 * Create Admin user for Partner Team (Red Hat)
