@@ -77,14 +77,13 @@ We encourage you to set up your tests using playbooks based on the existing code
 
 **Partner Team:** Network Partner team. For companies that have multiple products in and development teams we split this into groups, such as "company-product", e.g. `cisco-ios`, `cisco-nxos`. Otherwise a single team is used, such as `Juniper`.
 
-
 **Remote CI:** This item represents your lab. It is an item that will hold the label that will be attached to job runs. Users of a team are associated with the Remote CIs they are allowed to interact with. Special Tests can be attached to specific Remote CIs. Remote CIs are owned by a "team", so the same name can be reused, e.g. Remote CI `net` can exist under "Ansible" and "cisco-nxos".
 
 **Test:** Set of tests that will be run on the deployed platform. Tests can be specified at different levels. The Topic level, the Team level, the Remote CI level.
 
 **Job:** A run of a topic against a specific component.
 
-**Topic:** Main item of focus. Example are Ansible 2.2, Ansible 2.3, Ansible 2.4, ...
+**Topic:** Main item of focus. Example are ``Ansible-2.3``, ``Ansible-2.4``, ``Ansible-devel``. The topics are created and owned by the "Product Team" (Ansible) so they can be common and sharded between "Partner Teams". If the topics are not visible please ask for them to be shared.
 
 **Component:** Topics are made of components. Components are items that will be tested during the deployment. In the case of Ansible 2.3 for example, components are Ansible 2.3 stable branch snapshots
 
@@ -119,6 +118,12 @@ The following is the list of steps to be completed:
 
   * [DCI Teams](https://www.distributed-ci.io/#!/admin/teams)
   * If Ansible modules exist for multiple platforms for this company, then we create one team per product, using the Ansible platform prefix, see existing teams for examples.
+
+* Give Parner Team access to Topics (Red Hat)
+
+  * [DCI Topics](https://www.distributed-ci.io/topics)
+  * For each of the appropriate topics, edit and add the new team to the "Topic's teams" list
+
 
 * Create Admin user for Partner Team (Red Hat)
 
