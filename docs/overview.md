@@ -38,7 +38,7 @@ We have an Ansible Role ([ansible-dci-setup](/dci-agent-setup)) to facilitate th
 
 DCI test playbooks contain several steps which correspond to various testing states. Broadly speaking, a DCI test playbook needs to register a new job with the control server, and then keep the control server up to date on the various steps of the testing process. Each step of the testing process is defined as a different play and keeps the DCI control server up to date on which step is being run by defining the dci_status variable.
 
-To get an idea of how this all fits together, take a look at our current test setup here: [playbook.yaml](/playbook.yaml). This example playbook is what we are currently using to test the modules that are supported by the Ansible team. These tests can be run using the following command:
+To get an idea of how this all fits together, take a look at our current test setup here: [playbook.yml](/playbook.yml). This example playbook is what we are currently using to test the modules that are supported by the Ansible team. These tests can be run using the following command:
 
    `ansible-playbook -i hosts playbook.yml -e platform='vyos' -e topic='Ansible-2.4`
 
