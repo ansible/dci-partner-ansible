@@ -5,7 +5,7 @@ We have an Ansible role to install the DCI Agent here: [dci-agent-setup](/dci-ag
 At the moment the [DCI agent](https://github.com/redhat-cip/python-dciclient) is only officially supported and tested on CentOS 7 and RHEL 7 servers, which we provide packages for. If vendors prefer to use an Ubuntu host, the `dci-agent` role can also be used to install the DCI agent on Ubuntu.
 
 ## Role Setup
-Before running the role to install the DCI agent, configure the RemoteCIs that you wish to install credentials for in [dci-agent/defaults/main.yaml](/dci-agent-setup/roles/dci-agent/defaults/main.yaml). Each platform (RemoteCI) that you are testing requires a separate API key, and are configured using a list of dictionaries like so:
+Before running the role to install the DCI agent, configure the RemoteCIs that you wish to install credentials for in [roles/dci-agent/defaults/main.yaml](/dci-agent-setup/roles/dci-agent/defaults/main.yaml). Each platform (RemoteCI) that you are testing requires a separate API key, and are configured using a list of dictionaries like so:
 
 ```
 remotecis:
