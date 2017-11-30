@@ -12,7 +12,7 @@ DCI has two main components:
 
 2. **DCI agent** which sits behind the vendor's firewall and runs the integration tests.
 
-The control server is in charge of taking snapshots of the Ansible Git repo a number of times a day via the *feeder* process. It is configured to post these snapshots to *topics* which represent different releases (currently devel, and 2.3). The control server is managed by Ansible, and aside from getting access to the API, vendors do not need to worry too much about this component.
+The control server is in charge of taking snapshots of the Ansible Git repo a number of times a day via the *feeder* process. It is configured to post these snapshots to *topics* which represent different releases (currently devel, and 2.4). The control server is managed by Ansible, and aside from getting access to the API, vendors do not need to worry too much about this component.
 
 "The DCI agent is in charge of invoking integration tests. Since integration tests are just playbooks they can be run from the DCI agent periodically via cron jobs, manually or however the vendor sees fit. When this happens, the agent reaches out to the control server, authenticates, and pulls the latest snapshot for whichever topic (version) is being tested. The agent then uses Ansible playbooks to provision the correct test environment, runs the configured tests and then pushes the test results back to the control server. Once results are ready contributors from Ansible and the vendor can log in to the control server and see what happened.
 
@@ -24,14 +24,9 @@ We have an Ansible Role ([ansible-dci-setup](/dci-agent-setup)) to facilitate th
 
 ### Cron Scripts
 
-    # Update cache of Ansible source code
-    30 22 * * * DCI_CS_URL='https://api.distributed-ci.io' DCI_LOGIN='admin' DCI_PASSWORD='REDACTED' bash -c "cd ~/dci-feeders && ansible-playbook playbook.yml"
-    30 10 * * * DCI_CS_URL='https://api.distributed-ci.io' DCI_LOGIN='admin' DCI_PASSWORD='REDACTED' bash -c "cd ~/dci-feeders && ansible-playbook playbook.yml"
-
     # Run Tests
-    00 18 * * * DCI_CS_URL='https://api.distributed-ci.io' DCI_CLIENT_ID='REDACTED' DCI_API_SECRET='REDACTED' bash -c "cd ~/dci-partner-ansible && ansible-playbook -i hosts playbook.yml -e platform='vyos' -e topic='Ansible-2.4'"
-    15 18 * * * DCI_CS_URL='https://api.distributed-ci.io' DCI_CLIENT_ID='REDACTED' DCI_API_SECRET='REDACTED' bash -c "cd ~/dci-partner-ansible && ansible-playbook -i hosts playbook.yml -e platform='vyos' -e topic='Ansible-2.3'"
-
+    00 18 * * * source /etc/dci/vyos.sh && bash -c "cd dci-ansible && ansible-playbook -i inventory playbook.yml -e platform='vyos' -e topic='Ansible-devel-coverage'"
+    15 18 * * * source /etc/dci/eos.sh && bash -c "cd dci-ansible && ansible-playbook -i inventory playbook.yml -e platform='eos' -e topic='Ansible-2.4'"
 
 
 ## Configuring Tests
@@ -75,9 +70,9 @@ We encourage you to set up your tests using playbooks based on the existing code
 
 **Product Team:** The "top-level" team, in this case Ansible.
 
-**Partner Team:** Network Partner team. For companies that have multiple products in and development teams we split this into groups, such as "company-product", e.g. `cisco-ios`, `cisco-nxos`. Otherwise a single team is used, such as `Juniper`.
+**Partner Team:** A Network Partner team. For companies that have multiple products in and development teams we split this into groups, such as "company-product", e.g. `cisco-ios`, `cisco-nxos`. Otherwise a single team is used, such as `Juniper`.
 
-**Remote CI:** This item represents your lab. It is an item that will hold the label that will be attached to job runs. Users of a team are associated with the Remote CIs they are allowed to interact with. Special Tests can be attached to specific Remote CIs. Remote CIs are owned by a "team", so the same name can be reused, e.g. Remote CI `net` can exist under "Ansible" and "cisco-nxos".
+**Remote CI:** This item represents your lab. It is an item that will hold the label that will be attached to job runs. Users of a team are associated with the Remote CIs they are allowed to interact with. Special Tests can be attached to specific Remote CIs. Remote CIs are owned by a "team", so the same name can be reused, e.g. Remote CI `net` can exist under "Ansible" and "cisco-nxos". If there are multiple versions then this will be added here, e.g. ``cisco-nxos-3000``. 
 
 **Test:** Set of tests that will be run on the deployed platform. Tests can be specified at different levels. The Topic level, the Team level, the Remote CI level.
 
@@ -85,11 +80,11 @@ We encourage you to set up your tests using playbooks based on the existing code
 
 **Topic:** Main item of focus. Example are ``Ansible-2.3``, ``Ansible-2.4``, ``Ansible-devel``. The topics are created and owned by the "Product Team" (Ansible) so they can be common and sharded between "Partner Teams". If the topics are not visible please ask for them to be shared.
 
-**Component:** Topics are made of components. Components are items that will be tested during the deployment. In the case of Ansible 2.3 for example, components are Ansible 2.3 stable branch snapshots
+**Component:** Topics are made of components. Components are items that will be tested during the deployment. For Ansible the components are in the form ``$topic $YY-MM-DD $sha``, e.g. ``Ansible-devel 2017-11-10 639bac1``. The list of recent components can be found at [/components](https://www.distributed-ci.io/components).
 
 **Jobstate:** A job goes through different phases and does different things during those phases. In DCI terminology, the name of those phases are strictly enforced. Jobs go from: new -> pre-run -> running -> post-run -> success|fail
 
-**Feeders:** Fetches Ansible source code for the specific Topics and stored on dci-agent host, the applicable version is used in [/hooks/running.yml](https://github.com/ansible/dci-partner-ansible/blob/master/hooks/running.yml)
+**Feeders:** Fetches Ansible source code for the specific Topics. This process runs only on the dci-agent managed by the "Product Team" (Ansible), generally run on the Product Team's dci-agent host. The list of fetched components, and dates created can be found at [/components](https://www.distributed-ci.io/components). 
 
 # On-Boarding Steps
 
