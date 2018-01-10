@@ -2,8 +2,7 @@
 - name: Retrieve the job results
   dci_job:
     id: '{{ job_id }}'
-    embed:
-      - results
+    embed: results
   register: job_results
   delegate_to: localhost
 
